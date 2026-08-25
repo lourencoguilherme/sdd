@@ -84,6 +84,49 @@ Instead of one general-purpose AI, SDD uses 7 specialized agents:
 
 ---
 
+## Extensão deste fork: execução autônoma de epics (`epic-autonomous`)
+
+> Adição exclusiva deste fork. Não altera nada do plugin SDD original — é uma
+> camada **puramente aditiva**, construída ao aplicar o SDD no projeto real
+> `message-ai`. Vive em `.claude/` e usa apenas primitivas já existentes do SDD
+> (`workflow.yaml`, `spec validate`/`index`, `archive store`, os formatos
+> `SPEC.md`/`PLAN.md`).
+
+O fluxo padrão do SDD pausa em gates humanos (aprovar spec → aprovar plano →
+verificar). O `epic-autonomous` roda um workflow/epic **de ponta a ponta**
+substituindo esses gates humanos por gates **objetivos**: agentes especializados
+mais um loop limitado de review/fix, pausando só quando aparece uma STOP
+condition real.
+
+### Componentes
+
+| Item | Caminho | Papel |
+|------|---------|-------|
+| Comando `/epic-autonomous <workflow-id>` | `.claude/commands/epic-autonomous.md` | Inicia ou retoma a execução autônoma de um workflow existente |
+| Skill `epic-autonomous` | `.claude/skills/epic-autonomous/` | Máquina de estados, Definition of Done, regras de paralelismo e STOP conditions |
+| Agente `tech-lead` | `.claude/agents/tech-lead.md` | Revisão de arquitetura e conformidade com a spec |
+| Agente `implementer` | `.claude/agents/implementer.md` | Executa o plano de implementação |
+| Agente `tester` | `.claude/agents/tester.md` | Escreve e roda testes |
+| Agente `qa` | `.claude/agents/qa.md` | Verificação contra critérios de aceite |
+| Agente `bug-fixer` | `.claude/agents/bug-fixer.md` | Ciclo limitado de correção de findings |
+
+### Como usar
+
+```
+/epic-autonomous a1b2c3      # a1b2c3 = <id> em sdd/workflows/<id>-<name>/
+```
+
+O comando confirma que `sdd/workflows/<id>-*/workflow.yaml` existe, lê
+`autonomy.yaml` para decidir entre início limpo ou retomada, e segue a skill
+como autoridade única sobre transições de fase e STOP conditions.
+
+> **Nota sobre distribuição:** por viver em `.claude/` da raiz, esta camada
+> funciona ao trabalhar *dentro* deste repositório, mas **não** é distribuída
+> para quem instala o plugin `sdd`. Para distribuí-la junto do plugin, os
+> arquivos precisariam ir para `plugin/core/`.
+
+---
+
 ## Reducing Permission Prompts
 
 SDD commands create many files. To reduce permission prompts, add this to your `.claude/settings.local.json`:
