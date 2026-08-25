@@ -187,6 +187,18 @@ Add entry to `changes/INDEX.md`:
    ```
    Note: Links are relative within the `changes/` directory.
 
+### Step 7.5: Mirror to Jira (optional)
+
+If `sdd/sdd-settings.yaml` has `jira.enabled: true`, invoke the
+[`jira-sync`](../jira-sync/) skill with operation `create` and this change's
+directory. It creates the Jira issue and writes `jira_key`/`jira_url` back into
+the change's `SPEC.md` frontmatter. For an **epic**, sync the epic issue first,
+then each child change (linked to the epic).
+
+This step is **fail-soft**: if `jira` is absent/disabled, the connector is
+unavailable, or anything errors, skip it and continue — never block change
+creation because of Jira.
+
 ### Step 8: Return Result
 
 Return:
@@ -194,6 +206,7 @@ Return:
 spec_path: changes/YYYY/MM/DD/<name>/SPEC.md
 plan_path: changes/YYYY/MM/DD/<name>/PLAN.md
 index_updated: true
+jira_key: MSG-123   # present only if jira mirroring is enabled and succeeded
 ```
 
 ## PR Size Guidelines

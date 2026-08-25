@@ -82,6 +82,53 @@
       "items": {
         "$ref": "#/$defs/component"
       }
+    },
+    "jira": {
+      "type": "object",
+      "description": "Optional Jira board mirroring. When enabled, the jira-sync skill mirrors SDD changes to Jira via the Atlassian MCP connector — creating an issue per change and transitioning/commenting it as SDD phases advance. Local SDD files remain the source of truth; Jira is a mirror.",
+      "required": ["enabled"],
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Master switch. When false, SDD never touches Jira."
+        },
+        "cloud_id": {
+          "type": "string",
+          "description": "Atlassian cloudId for the site (resolve once via the connector's accessible-resources tool). Optional if `site` is set and the connector can resolve it."
+        },
+        "site": {
+          "type": "string",
+          "description": "Atlassian site host, e.g. 'suaempresa.atlassian.net'."
+        },
+        "project_key": {
+          "type": "string",
+          "description": "Target Jira project key, e.g. 'MSG'."
+        },
+        "issue_type_map": {
+          "type": "object",
+          "description": "Maps SDD change types to Jira issue type names.",
+          "additionalProperties": { "type": "string" },
+          "properties": {
+            "feature": { "type": "string", "default": "Story" },
+            "bugfix": { "type": "string", "default": "Bug" },
+            "refactor": { "type": "string", "default": "Task" },
+            "epic": { "type": "string", "default": "Epic" }
+          }
+        },
+        "status_map": {
+          "type": "object",
+          "description": "Maps SDD lifecycle milestones to Jira status/transition names on the target workflow.",
+          "additionalProperties": { "type": "string" },
+          "properties": {
+            "created": { "type": "string", "default": "To Do" },
+            "spec_approved": { "type": "string", "default": "In Progress" },
+            "plan_approved": { "type": "string", "default": "In Progress" },
+            "verified": { "type": "string", "default": "Done" }
+          }
+        }
+      }
     }
   },
   "$defs": {

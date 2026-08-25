@@ -230,6 +230,24 @@ End state: `autonomy.yaml.status: completed`, and the Orchestrator reports
 `EPIC = READY_FOR_PRODUCT_ACCEPTANCE`. No further Feature starts after
 this — the run ends, it does not idle waiting for more work.
 
+## Jira board mirroring (optional)
+
+If `sdd/sdd-settings.yaml` has `jira.enabled: true`, the Orchestrator advances
+the Jira board as it advances the epic, so the board is a live, visual view of
+the autonomous run. At each gate transition, call the `jira-sync` skill
+(`plugin/core/skills/jira-sync/`) with the matching milestone:
+
+| Orchestrator gate | `jira-sync` call |
+|-------------------|------------------|
+| Item enters the run (spec exists) | `create` (if no `jira_key` yet) |
+| Spec approved / plan produced | `sync … spec_approved`, then `sync … plan_approved` |
+| Item passes Definition of Done | `sync … verified` |
+
+This is **fail-soft and out of band**: Jira never gates a transition. The
+Orchestrator's authority over phase transitions is unchanged — a Jira failure
+is logged and ignored, and the run proceeds. Never let a Jira error raise a
+STOP condition.
+
 ## See also
 
 - `reference/stop-conditions.md` — the full STOP condition catalogue
