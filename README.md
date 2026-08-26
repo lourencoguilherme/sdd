@@ -158,6 +158,7 @@ See **[Permissions Setup](./plugin/hooks/PERMISSIONS.md)** for full configuratio
 
 ## Documentation
 
+- **[Instalação (a partir deste fork)](./docs/INSTALL.md)** - Instalar via GitHub + add-ons de Jira e epic-autonomous
 - **[Getting Started](./docs/getting-started.md)** - First project tutorial
 - **[Workflows](./docs/workflows.md)** - Feature, bugfix, and refactor workflows
 - **[Commands](./docs/commands.md)** - Full command reference
