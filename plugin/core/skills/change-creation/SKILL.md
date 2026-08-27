@@ -187,6 +187,16 @@ Add entry to `changes/INDEX.md`:
    ```
    Note: Links are relative within the `changes/` directory.
 
+### Cost note: delegate heavy drafting/analysis to Gemini (optional)
+
+To reduce token spend, the token-heavy parts of refinement — generating/rewriting
+spec prose, and analyzing a spec for bloat/risks — can be delegated to the
+[`tools/refinar/refinar.py`](../../tools/refinar/) orchestrator, which runs on the
+Gemini CLI (cheap tier) with the size ceiling enforced **in code**. Claude then
+only reviews the returned candidate (`SPEC.candidate.md`) and promotes it if it
+passes. `refinar.py analyze <spec>` gives a cheap spec review without spending
+Claude tokens. This is optional and off unless the project opts into it.
+
 ### Step 7.5: Mirror to Jira (optional)
 
 If `sdd/sdd-settings.yaml` has `jira.enabled: true`, invoke the
