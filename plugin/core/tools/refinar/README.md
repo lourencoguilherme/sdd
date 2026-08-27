@@ -41,6 +41,34 @@ Você (ou 1 revisão barata do Claude) promove a candidata se aprovar.
 
 - `GEMINI_MODEL` — modelo (default `gemini-2.5-flash`, barato/rápido).
 
+## `router.py` — roteador adaptativo por task-type (CLI-first)
+
+Decide, **por tipo de task do SDD**, o modelo mais barato que dá conta, e só
+**escala** para um mais forte se o barato falhar uma validação feita **em
+código**. Usa o consumo de tokens para gerenciar o refino e sair mais rápido: o
+caminho feliz para no barato e nunca toca no caro.
+
+```bash
+router.py backends                                   # o que está disponível
+router.py run --task analyze --spec .../SPEC.md      # barato, sem escalar
+router.py run --task draft   --spec .../SPEC.md --context CLAUDE.md
+```
+
+Backends = CLIs já autenticadas (sem gateway, sem API key nova): `gemini`
+(barato/grátis, default), `claude` (premium; `--output-format json` dá **tokens
+reais**), `codex`/`openai` plugáveis quando instalados.
+
+Política (escada barato→premium) por task, em `POLICIES`:
+
+| Task | Escada |
+|------|--------|
+| analyze / critique | gemini flash |
+| draft / refine | gemini flash → (gemini pro) → claude sonnet, com early-exit por validação |
+| decompose / verify | gemini pro → claude sonnet |
+
+O relatório de saída diz **quem resolveu**, se **escalou**, os **tokens**
+(reais/estimados) e as métricas da spec.
+
 ## Como o custo cai
 
 | Etapa | Onde roda |
