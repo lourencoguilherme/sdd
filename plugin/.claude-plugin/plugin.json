@@ -9,7 +9,8 @@
     "./core/commands/sdd.md",
     "./core/commands/sdd-run.md",
     "./core/commands/sdd-help.md",
-    "./core/commands/sdd-jira.md"
+    "./core/commands/sdd-jira.md",
+    "./core/commands/refino-enxuto.md"
   ],
   "skills": [
     "./core/skills/"
