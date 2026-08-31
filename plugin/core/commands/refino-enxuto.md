@@ -1,9 +1,18 @@
 ---
-description: Refina uma solução em UMA sessão para empresa pequena/solo lowcost — conselho mínimo + gate de custo, entrega docs funcional/técnico + C4 (Mermaid) + sequência, e para na aprovação humana.
-argument-hint: <ideia ou problema em linguagem natural>
+description: Refina uma solução em UMA sessão para empresa pequena/solo lowcost — conselho mínimo + gate de custo, entrega docs funcional/técnico + C4 (Mermaid) + sequência, e para na aprovação humana. Aceita `continuar <id>` para ingerir um refino pesado que não fechou.
+argument-hint: <ideia em linguagem natural> | continuar <workflow-id>
 ---
 
-Invoque a skill **`refino-enxuto`** para a ideia/problema em `$ARGUMENTS`.
+Invoque a skill **`refino-enxuto`** para o que está em `$ARGUMENTS`.
+
+**Dois modos:**
+- **Novo:** `$ARGUMENTS` é a ideia/problema em linguagem natural → refina do zero.
+- **Continuar:** `$ARGUMENTS` começa com `continuar`/`continue` + um id de
+  workflow (ex.: `continuar aj3fnx`) ou caminho de change → **ingere o refino
+  SDD pesado existente** (`sdd/workflows/<id>/`, `changes/**/SPEC.md`), destila
+  os pontos críticos e as decisões já tomadas (delegando a leitura pesada ao
+  `tools/refinar`/Gemini para não gastar tokens) e entrega os docs enxutos —
+  **sem sobrescrever** as specs originais. Ver a seção "Modo continuar" da skill.
 
 Esta é a trilha **enxuta e lowcost** do SDD — uma alternativa ao fluxo completo,
 para quando você é uma empresa pequena/solo e precisa **fechar o refino em uma

@@ -89,6 +89,40 @@ passa em silêncio** e `COST.md` não é criado.
 6. **Devs:** aprovado, o time de desenvolvimento implementa a solução aprovada
    (fora do escopo desta skill).
 
+## Modo continuar (ingerir um refino pesado que não fechou)
+
+Quando `$ARGUMENTS` começa com **`continuar`/`continue`** seguido de um id de
+workflow (ex.: `continuar aj3fnx`) ou de um caminho de change, a skill **não
+começa do zero** — ela **ingere o que já foi produzido** pelo fluxo SDD pesado e
+destila em uma sessão. Objetivo: aproveitar semanas de refino sem herdar o
+inchaço.
+
+Passos do modo continuar:
+
+1. **Localize os artefatos existentes:**
+   - `sdd/workflows/<id>-*/workflow.yaml` (estado: quais features estão
+     `approved` vs `pending`);
+   - as `changes/**/SPEC.md` ligadas a esse workflow;
+   - qualquer achado de campo / nota de exploração já registrada.
+2. **Extraia barato (não releia 2K linhas no Claude).** Para specs grandes,
+   delegue a extração ao orquestrador [`tools/refinar`](../../tools/refinar/)
+   (Gemini): peça um resumo estruturado com **(a)** decisões técnicas já tomadas
+   e aprovadas, **(b)** pontos críticos ainda em aberto, **(c)** o que é inchaço
+   descartável (histórico de revisão, repetição, detalhe de implementação). Isso
+   mantém o custo baixo — coerente com a Carta Lowcost.
+3. **Reconcilie com a Carta Lowcost:** trate as decisões `approved` como
+   assentadas (não reabra sem motivo); aplique o **gate de custo** apenas aos
+   pontos ainda em aberto ou às escolhas caras herdadas.
+4. **Entregue enxuto:** escreva os docs em `docs/<slug>/` (FUNCTIONAL, TECHNICAL
+   com C4, e COST se o gate disparar), marcando de forma explícita **o que foi
+   herdado** vs **o que foi decidido agora**. **Não sobrescreva** as `SPEC.md`
+   originais — elas são o insumo; a trilha enxuta escreve no seu próprio espaço
+   (`docs/<slug>/`).
+5. **Pare na aprovação humana**, como no fluxo normal.
+
+Resultado: você retoma de onde o refino pesado parou, mas **fechando** — porque
+a saída é o conjunto enxuto de artefatos, não mais uma rodada de spec inflada.
+
 ## STOP (pare e pergunte)
 
 - Ambiguidade de negócio que muda a solução.
