@@ -37,6 +37,34 @@ Você está refinando para uma **empresa pequena/solo**. Vieses obrigatórios:
 `COST.md` ≤ ~60 linhas. Estourou o teto → o escopo é grande demais: **decomponha**
 em vez de inflar.
 
+## Roteamento de modelos (barato por padrão, multi-modelo)
+
+Esta skill **não usa um único modelo caro** para tudo. Toda tarefa pesada
+(gerar/reescrever texto, extrair de specs grandes, analisar custo) é roteada
+pelo orquestrador adaptativo [`tools/refinar/router.py`](../../tools/refinar/),
+que **decide o modelo mais barato que dá conta** e só **escala** para um mais
+forte se a validação em código falhar (caminho feliz para no barato):
+
+```bash
+python3 <plugin>/core/tools/refinar/router.py run --task <tipo> --spec <arquivo> [--context ...]
+```
+
+Mapeamento das etapas desta skill para as tasks do roteador:
+
+| Etapa da trilha | Task do roteador | Efeito |
+|-----------------|------------------|--------|
+| Extrair de specs existentes (modo continuar) | `analyze` / `critique` | roda no Gemini (barato) |
+| Rascunho do Funcional | `draft` | Gemini flash → escala só se estourar teto |
+| Rascunho do Técnico + C4 | `draft` | idem |
+| Avaliar custo da proposta | `analyze` | Gemini |
+| Sugerir decomposição (estourou teto) | `decompose` | Gemini pro → Claude se preciso |
+
+Regra: **o Orquestrador (Claude desta sessão) não gera o texto pesado inline** —
+ele chama o roteador, **revisa** a saída (revisar custa pouco) e decide. Se o
+roteador não estiver disponível (sem `gemini`/`claude` no PATH), caia para
+geração inline, mas avise no relatório. Isso mantém o refino barato e usa vários
+modelos conforme a dificuldade — não um só.
+
 ## O conselho mínimo (aplicado como lentes, em UM passo)
 
 Não são seis agentes tagarelas gerando paredes de texto — são **lentes** que o
